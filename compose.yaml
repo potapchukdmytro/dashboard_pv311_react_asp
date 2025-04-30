@@ -47,5 +47,7 @@ networks:
 
 volumes:
   pv311_api_files:
+    name: pv311_api
   pv311_db:
     driver: local
+    name: pv311_db
