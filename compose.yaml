@@ -34,7 +34,11 @@ services:
       - "api_nt"
 
   front:
-    build: dashboard/
+    build: 
+      context: dashboard/
+      args:
+        REACT_APP_API_URL: http://localhost:7223/api/
+        REACT_APP_API_IMAGES_URL: http://localhost:7223/images/
     image: potapchuk22/pv311_react
     container_name: front
     ports:
