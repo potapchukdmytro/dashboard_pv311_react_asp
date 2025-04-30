@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using pv311_web_api.BLL.DTOs.Account;
 using pv311_web_api.BLL.Services.Email;
 using pv311_web_api.BLL.Services.JwtService;
 using pv311_web_api.DAL.Entities;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using StackExchange.Redis;
 using System.Text;
 
 namespace pv311_web_api.BLL.Services.Account
@@ -17,24 +14,24 @@ namespace pv311_web_api.BLL.Services.Account
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
         private readonly IEmailService _emailService;
-        private readonly IConfiguration _configuration;
         private readonly IJwtService _jwtService;
         private readonly IMapper _mapper;
+        private readonly IDatabase _redisDB;
 
-        public AccountService(UserManager<AppUser> userManager, IEmailService emailService, RoleManager<AppRole> roleManager, IMapper mapper, IConfiguration configuration, IJwtService jwtService)
+        public AccountService(UserManager<AppUser> userManager, IEmailService emailService, RoleManager<AppRole> roleManager, IMapper mapper, IJwtService jwtService, IDatabase redisDB)
         {
             _userManager = userManager;
             _emailService = emailService;
             _roleManager = roleManager;
             _mapper = mapper;
-            _configuration = configuration;
             _jwtService = jwtService;
+            _redisDB = redisDB;
         }
 
         public async Task<bool> EmailConfirmAsync(string id, string base64)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if(user == null)
+            if (user == null)
             {
                 return false;
             }
@@ -44,6 +41,12 @@ namespace pv311_web_api.BLL.Services.Account
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
             return result.Succeeded;
+        }
+
+        public string? GetUserToken(string userId)
+        {
+            var token = _redisDB.StringGet($"token:{userId}");
+            return token;
         }
 
         public async Task<ServiceResponse> LoginAsync(LoginDto dto)
@@ -68,7 +71,10 @@ namespace pv311_web_api.BLL.Services.Account
             // Jwt generate
             var tokens = await _jwtService.GenerateTokensAsync(user);
 
-            if(tokens == null)
+            // redis
+            _redisDB.StringSet($"token:{user.Id}", tokens.AccessToken);
+
+            if (tokens == null)
             {
                 return new ServiceResponse("Помилка під час генерування токенів");
             }
@@ -78,7 +84,7 @@ namespace pv311_web_api.BLL.Services.Account
 
         public async Task<ServiceResponse> RegisterAsync(RegisterDto dto)
         {
-            if(await _userManager.FindByEmailAsync(dto.Email) != null)
+            if (await _userManager.FindByEmailAsync(dto.Email) != null)
                 return new ServiceResponse($"Пошта '{dto.Email}' вже використовується");
             if (await _userManager.FindByNameAsync(dto.UserName) != null)
                 return new ServiceResponse($"Ім'я користувача '{dto.UserName}' вже використовується");
@@ -87,12 +93,12 @@ namespace pv311_web_api.BLL.Services.Account
 
             var result = await _userManager.CreateAsync(user, dto.Password);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 return new ServiceResponse(result.Errors.First().Description);
             }
-            
-            if(result.Succeeded && await _roleManager.RoleExistsAsync("user"))
+
+            if (result.Succeeded && await _roleManager.RoleExistsAsync("user"))
             {
                 result = await _userManager.AddToRoleAsync(user, "user");
             }
@@ -139,7 +145,7 @@ namespace pv311_web_api.BLL.Services.Account
             {
                 return false;
             }
-           
+
         }
     }
 }

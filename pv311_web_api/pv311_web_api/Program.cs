@@ -18,6 +18,7 @@ using pv311_web_api.Jobs;
 using pv311_web_api.Middlewares;
 using Quartz;
 using Serilog;
+using StackExchange.Redis;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +56,13 @@ builder.Services.AddAuthentication(options =>
 
 // Add services to the container.
 builder.Services.AddServices();
+
+// redis
+builder.Services.AddScoped(cfg =>
+{
+    IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect("localhost");
+    return multiplexer.GetDatabase();
+});
 
 // Add quartz
 var jobs = new (Type type, string cronExpression)[]
