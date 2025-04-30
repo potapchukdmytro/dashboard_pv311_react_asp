@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres
+    container_name: db
     ports:
       - "5432:5432"
     environment:
@@ -11,21 +12,40 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    volumes:
+      - pv311_db:/var/lib/postgresql/data
     networks:
       - "api_nt"
 
   api:
-    build: .
+    build: pv311_web_api/
     image: potapchuk22/pv311_api
-    networks:
-      - "api_nt"
+    container_name: api
     ports:
-      - "80:8080"
+      - "7223:8080"
     environment:
       - "ConnectionStrings__NpgSql=User ID=postgres;Password=qwerty;Host=db;Port=5432;Database=pv311_web_api;"
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - pv311_api_files:/app/wwwroot
+    networks:
+      - "api_nt"
+
+  front:
+    build: dashboard/
+    image: potapchuk22/pv311_react
+    container_name: front
+    ports:
+      - "80:3000"
+    depends_on:
+      - "api"
 
 networks:
   api_nt:
+
+volumes:
+  pv311_api_files:
+  pv311_db:
+    driver: local
