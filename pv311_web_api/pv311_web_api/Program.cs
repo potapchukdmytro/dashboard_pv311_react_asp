@@ -107,9 +107,9 @@ builder.Services
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("localhost3000", builder =>
+    options.AddPolicy("localhost", builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder.WithOrigins("http://localhost")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials();
@@ -167,7 +167,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseCors("localhost3000");
+app.UseCors("localhost");
 
 // Static files
 var rootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
