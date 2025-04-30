@@ -94,6 +94,9 @@ const Navbar = () => {
                     <Link style={navLinkStyle} to="/cars">
                         Cars
                     </Link>
+                    <Link style={navLinkStyle} to="/cars">
+                        Engines
+                    </Link>
                 </Box>
 
                 <Box

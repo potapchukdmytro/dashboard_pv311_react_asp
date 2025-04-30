@@ -42,5 +42,10 @@ namespace pv311_web_api.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok();
+        }
     }
 }
