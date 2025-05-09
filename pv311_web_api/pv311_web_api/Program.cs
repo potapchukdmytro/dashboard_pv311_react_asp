@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -58,11 +59,11 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddServices();
 
 // redis
-builder.Services.AddScoped(cfg =>
-{
-    IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect("localhost");
-    return multiplexer.GetDatabase();
-});
+//builder.Services.AddScoped(cfg =>
+//{
+//    IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect("localhost");
+//    return multiplexer.GetDatabase();
+//});
 
 // Add quartz
 var jobs = new (Type type, string cronExpression)[]
@@ -113,11 +114,18 @@ builder.Services
     .AddDefaultTokenProviders();
 
 // CORS
+string? allowedOrigin = builder.Configuration["Cors:AllowedOrigin"];
+
+if(string.IsNullOrEmpty(allowedOrigin))
+{
+    allowedOrigin = "http://localhost";
+}
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("localhost", builder =>
+    options.AddPolicy("CORSPolicy", builder =>
     {
-        builder.WithOrigins("http://localhost")
+        builder.WithOrigins(allowedOrigin)
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials();
@@ -175,7 +183,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseCors("localhost");
+app.UseCors("CORSPolicy");
 
 // Static files
 var rootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");

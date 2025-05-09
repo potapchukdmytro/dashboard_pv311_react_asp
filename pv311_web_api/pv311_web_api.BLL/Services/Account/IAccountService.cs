@@ -8,6 +8,6 @@ namespace pv311_web_api.BLL.Services.Account
         Task<ServiceResponse> RegisterAsync(RegisterDto dto);
         Task<bool> EmailConfirmAsync(string id, string token);
         Task<bool> SendEmailConfirmAsync(string userId);
-        string? GetUserToken(string userId);
+        //string? GetUserToken(string userId);
     }
 }

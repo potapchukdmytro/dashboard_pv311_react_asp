@@ -41,16 +41,16 @@ namespace pv311_web_api.Controllers
             return CreateActionResult(response);
         }
 
-        [HttpGet("usertoken")]
-        public string? GetUserToken(string? id)
-        {
-            if(string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
+        //[HttpGet("usertoken")]
+        //public string? GetUserToken(string? id)
+        //{
+        //    if(string.IsNullOrEmpty(id))
+        //    {
+        //        return null;
+        //    }
 
-            return _accountService.GetUserToken(id);
-        }
+        //    return _accountService.GetUserToken(id);
+        //}
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterDto dto)
