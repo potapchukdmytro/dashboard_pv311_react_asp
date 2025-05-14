@@ -22,12 +22,6 @@ namespace pv311_web_api.Controllers
             _jwtService = jwtService;
         }
 
-        [HttpGet("test2")]
-        public IActionResult Test()
-        {
-            return Ok();
-        }
-
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync([FromBody] LoginDto dto)
         {

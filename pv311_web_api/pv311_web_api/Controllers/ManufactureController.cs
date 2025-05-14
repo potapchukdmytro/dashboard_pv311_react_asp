@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using pv311_web_api.BLL.DTOs.Manufactures;
+using pv311_web_api.BLL.Services;
 using pv311_web_api.BLL.Services.Manufactures;
 
 namespace pv311_web_api.Controllers
@@ -34,6 +35,11 @@ namespace pv311_web_api.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(string? id)
         {
+            if(id == null)
+            {
+                return BadRequest(new ServiceResponse("Id required", false));
+            }
+
             if(!ValidateId(id, out string error))
             {
                 return BadRequest(error);

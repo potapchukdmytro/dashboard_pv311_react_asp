@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pv311_web_api.BLL.DTOs.Role;
+using pv311_web_api.BLL.Services;
 using pv311_web_api.BLL.Services.Role;
 
 namespace pv311_web_api.Controllers
@@ -65,6 +66,11 @@ namespace pv311_web_api.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(string? id)
         {
+            if (id == null)
+            {
+                return BadRequest(new ServiceResponse("Id required", false));
+            }
+
             var isValidId = ValidateId(id, out string message);
             if (!isValidId)
                 return BadRequest(message);

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace pv311_web_api.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class addcreateandupdatedate : Migration
+    public partial class Addcreateandupdatedate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

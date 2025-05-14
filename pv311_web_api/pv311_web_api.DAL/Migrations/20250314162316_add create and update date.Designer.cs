@@ -13,7 +13,7 @@ namespace pv311_web_api.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250314162316_add create and update date")]
-    partial class addcreateandupdatedate
+    partial class Addcreateandupdatedate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
