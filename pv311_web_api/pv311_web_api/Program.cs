@@ -110,6 +110,7 @@ builder.Services
     .AddDefaultTokenProviders();
 
 // CORS
+string corsPolicy = "CORSPolicy";
 string? allowedOrigin = builder.Configuration["Cors:AllowedOrigin"];
 
 if(string.IsNullOrEmpty(allowedOrigin))
@@ -119,9 +120,10 @@ if(string.IsNullOrEmpty(allowedOrigin))
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CORSPolicy", builder =>
+    options.AddPolicy(corsPolicy, builder =>
     {
-        builder.WithOrigins(allowedOrigin)
+        builder
+        .AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials();
@@ -179,7 +181,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseCors("CORSPolicy");
+app.UseCors(corsPolicy);
 
 // Static files
 var rootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
