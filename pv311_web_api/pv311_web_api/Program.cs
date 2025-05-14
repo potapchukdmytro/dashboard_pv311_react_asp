@@ -92,11 +92,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Add database context
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    string? connectionString = builder.Configuration.GetConnectionString("NpgSql");
-    connectionString = string.IsNullOrEmpty(connectionString)
-    ? builder.Configuration.GetConnectionString("NpgSqlLocal")
-    : connectionString;
-
+    string? connectionString = builder.Configuration.GetConnectionString("NpgSqlAzure");
     options.UseNpgsql(connectionString);
 });
 
