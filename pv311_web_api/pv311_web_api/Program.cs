@@ -111,11 +111,13 @@ builder.Services
 
 // CORS
 string corsPolicy = "CORSPolicy";
-string? allowedOrigin = builder.Configuration["Cors:AllowedOrigin"];
+string[]? allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>();
 
-if(string.IsNullOrEmpty(allowedOrigin))
+if(allowedOrigins == null || allowedOrigins.Length == 0)
 {
-    allowedOrigin = "http://localhost";
+    allowedOrigins = ["http://localhost"];
 }
 
 builder.Services.AddCors(options =>
@@ -123,7 +125,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(corsPolicy, builder =>
     {
         builder
-        .AllowAnyOrigin()
+        .WithOrigins(allowedOrigins)
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials();
