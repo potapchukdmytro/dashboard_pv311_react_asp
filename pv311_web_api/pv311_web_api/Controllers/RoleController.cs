@@ -10,20 +10,22 @@ namespace pv311_web_api.Controllers
 {
     [ApiController]
     [Route("api/role")]
-    [Authorize(Roles = "admin,manager", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(Roles = "admin,manager", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RoleController : AppController
     {
         private readonly IRoleService _roleService;
-        private readonly IValidator<RoleDto> _roleValidator;
+        private readonly IValidator<CreateRoleDto> _createRoleValidator;
+        private readonly IValidator<UpdateRoleDto> _updateRoleValidator;
 
-        public RoleController(IRoleService roleService, IValidator<RoleDto> roleValidator)
+        public RoleController(IRoleService roleService, IValidator<CreateRoleDto> createRoleValidator, IValidator<UpdateRoleDto> updateRoleValidator)
         {
             _roleService = roleService;
-            _roleValidator = roleValidator;
+            _createRoleValidator = createRoleValidator;
+            _updateRoleValidator = updateRoleValidator;
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IActionResult> GetAsync(string? id)
         {
             
@@ -36,9 +38,9 @@ namespace pv311_web_api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] RoleDto dto)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateRoleDto dto)
         {
-            var validResult = await _roleValidator.ValidateAsync(dto);
+            var validResult = await _createRoleValidator.ValidateAsync(dto);
 
             if (!validResult.IsValid)
                 return BadRequest(validResult);
@@ -48,9 +50,9 @@ namespace pv311_web_api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody] RoleDto dto)
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateRoleDto dto)
         {
-            var validResult = await _roleValidator.ValidateAsync(dto);
+            var validResult = await _updateRoleValidator.ValidateAsync(dto);
 
             var isValidId = ValidateId(dto.Id, out string message);
             if (!isValidId)

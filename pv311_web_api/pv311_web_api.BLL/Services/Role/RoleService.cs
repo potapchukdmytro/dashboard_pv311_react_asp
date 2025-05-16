@@ -17,7 +17,7 @@ namespace pv311_web_api.BLL.Services.Role
             _mapper = mapper;
         }
 
-        public async Task<ServiceResponse> CreateAsync(RoleDto dto)
+        public async Task<ServiceResponse> CreateAsync(CreateRoleDto dto)
         {
             if(await _roleManager.RoleExistsAsync(dto.Name))
             {
@@ -76,7 +76,7 @@ namespace pv311_web_api.BLL.Services.Role
             return new ServiceResponse("Роль отримано", true, dto);
         }
 
-        public async Task<ServiceResponse> UpdateAsync(RoleDto dto)
+        public async Task<ServiceResponse> UpdateAsync(UpdateRoleDto dto)
         {
             if (await _roleManager.RoleExistsAsync(dto.Name))
             {

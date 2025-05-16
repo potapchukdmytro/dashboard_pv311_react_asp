@@ -15,6 +15,12 @@ namespace pv311_web_api.BLL.MapperProfiles
             CreateMap<AppUserRole, RoleDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RoleId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Role == null ? "" : src.Role.Name));
+
+            // CreateRoleDto -> AppRole
+            CreateMap<CreateRoleDto, AppRole>();
+
+            // UpdateRoleDto -> AppRole
+            CreateMap<UpdateRoleDto, AppRole>();
         }
     }
 }
