@@ -8,7 +8,7 @@ namespace pv311_web_api.Controllers
 {
     [ApiController]
     [Route("api/user")]
-    [Authorize(Roles = "admin,manager", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(Roles = "admin,manager", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
     public class UserController : AppController
     {
