@@ -5,6 +5,7 @@ using pv311_web_api.BLL.Services.Image;
 using pv311_web_api.BLL.Services.JwtService;
 using pv311_web_api.BLL.Services.Manufactures;
 using pv311_web_api.BLL.Services.Role;
+using pv311_web_api.BLL.Services.Storage;
 using pv311_web_api.BLL.Services.User;
 using pv311_web_api.Jobs;
 using Quartz;
@@ -23,6 +24,7 @@ namespace pv311_web_api.Infrastructure
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<ICarService, CarService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IStorageService, StorageService>();
         }
 
         public static void AddJobs(this IServiceCollection services, params (Type type, string cronExpression)[] jobs)

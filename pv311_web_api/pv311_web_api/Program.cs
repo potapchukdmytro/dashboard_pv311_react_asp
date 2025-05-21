@@ -1,6 +1,6 @@
+using Azure.Storage.Blobs;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -57,6 +57,13 @@ builder.Services.AddAuthentication(options =>
 
 // Add services to the container.
 builder.Services.AddServices();
+
+// Add blob service
+builder.Services.AddScoped(cfg =>
+{
+    var client = new BlobServiceClient(builder.Configuration.GetConnectionString("AzureStorage"));
+    return client;
+});
 
 // redis
 //builder.Services.AddScoped(cfg =>
