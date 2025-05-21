@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using pv311_web_api.BLL.DTOs.User;
 using pv311_web_api.BLL.Services.Image;
+using pv311_web_api.BLL.Services.Storage;
 using pv311_web_api.DAL.Entities;
 using System.Linq.Expressions;
 
@@ -11,14 +12,16 @@ namespace pv311_web_api.BLL.Services.User
     public class UserService : IUserService
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IStorageService _storageService;
         private readonly IImageService _imageService;
         private readonly IMapper _mapper;
 
-        public UserService(UserManager<AppUser> userManager, IMapper mapper, IImageService imageService)
+        public UserService(UserManager<AppUser> userManager, IMapper mapper, IImageService imageService, IStorageService storageService)
         {
             _userManager = userManager;
             _mapper = mapper;
             _imageService = imageService;
+            _storageService = storageService;
         }
 
         public async Task<ServiceResponse> CreateAsync(CreateUserDto dto)
@@ -36,11 +39,7 @@ namespace pv311_web_api.BLL.Services.User
 
             if(dto.Image != null)
             {
-                var imageName = await _imageService.SaveImageAsync(dto.Image, Settings.UsersPath);
-                if(!string.IsNullOrEmpty(imageName))
-                {
-                    entity.Image = Path.Combine(Settings.UsersPath, imageName);
-                }
+                entity.Image = await _storageService.UploadImageAsync(dto.Image, Settings.UsersPath);
             }
 
             var result = await _userManager.CreateAsync(entity, dto.Password);
@@ -77,7 +76,7 @@ namespace pv311_web_api.BLL.Services.User
 
             if(!string.IsNullOrEmpty(entity.Image))
             {
-                _imageService.DeleteImage(entity.Image);
+                await _storageService.DeleteImageAsync(entity.Image);
             }
 
             return new ServiceResponse($"Користувач '{entity.UserName}' успішно видалений", true);
